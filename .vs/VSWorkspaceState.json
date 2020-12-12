@@ -1,8 +1,15 @@
 {
   "ExpandedNodes": [
     "",
-    "\\API"
+    "\\API",
+    "\\Application",
+    "\\Application\\User",
+    "\\Application\\Validators",
+    "\\Domain",
+    "\\Infrastructure",
+    "\\Infrastructure\\Security",
+    "\\Persistence"
   ],
-  "SelectedNode": "\\API\\API.csproj",
+  "SelectedNode": "\\Application\\User\\Register.cs",
   "PreviewInSolutionExplorer": false
 }
