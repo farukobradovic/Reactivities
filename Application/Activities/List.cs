@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,20 +13,25 @@ namespace Application.Activities
 {
     public class List
     {
-        public class Querry : IRequest<List<Activity>> { }
-        public class Handler : IRequestHandler<Querry, List<Activity>>
+        public class Querry : IRequest<List<ActivityDto>> { }
+        public class Handler : IRequestHandler<Querry, List<ActivityDto>>
         {
             private readonly DataContext _context;
+            private readonly IMapper mapper;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, IMapper mapper)
             {
                 _context = context;
+                this.mapper = mapper;
             }
 
-            public async Task<List<Activity>> Handle(Querry request, CancellationToken cancellationToken)
+            public async Task<List<ActivityDto>> Handle(Querry request, CancellationToken cancellationToken)
             {
+                //eager loading
                 var activities = await _context.Activities.ToListAsync();
-                return activities;
+
+
+                return mapper.Map<List<Activity>, List<ActivityDto>>(activities);
             }
         }
 

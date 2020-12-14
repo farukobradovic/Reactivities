@@ -14,15 +14,28 @@ namespace Persistence
 
         public DbSet<Value> Values { get; set; }
         public DbSet<Activity> Activities { get; set; }
+        public DbSet<UserActivity> UserActivities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            //dotnet ef migrations add "UserActivityAdded" -p Persistence/ -s API/
+            //Kreiranje migracije 
+
+
             base.OnModelCreating(builder);
             builder.Entity<Value>()
             .HasData(
                 new Value { Id = 1, Name = "Value 1" },
                 new Value { Id = 2, Name = "Value 2" }
             );
+
+            //Kreiranje kompozitnog kljuca
+            builder.Entity<UserActivity>(x => x.HasKey(ua => new { ua.AppUserId, ua.ActivityId }));
+
+            //Kreiranje veza
+            builder.Entity<UserActivity>().HasOne(u => u.AppUser).WithMany(a => a.UserActivities).HasForeignKey(u => u.AppUserId);
+
+            builder.Entity<UserActivity>().HasOne(u => u.Activity).WithMany(a => a.UserActivities).HasForeignKey(u => u.ActivityId);
         }
     }
 }
