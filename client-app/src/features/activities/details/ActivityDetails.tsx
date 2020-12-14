@@ -3,12 +3,11 @@ import React, { useContext, useEffect } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Grid } from "semantic-ui-react";
 import { LoadingComponent } from "../../../app/layout/LoadingComponent";
-import ActivityStore from "../../../app/stores/activityStore";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import { ActivityDetailedChat } from "./ActivityDetailedChat";
 import ActivityDetailedHeader from "./ActivityDetailedHeader";
 import { ActivityDetailedInfo } from "./ActivityDetailedInfo";
-import { ActivityDetailedSideBar } from "./ActivityDetailedSideBar";
+import ActivityDetailedSideBar from "./ActivityDetailedSideBar";
 
 interface DetailParams {
   id: string;
@@ -39,7 +38,7 @@ const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
         <ActivityDetailedChat />
       </Grid.Column>
       <Grid.Column width={6}>
-        <ActivityDetailedSideBar />
+        <ActivityDetailedSideBar attendees={activity.attendees} />
       </Grid.Column>
     </Grid>
   );

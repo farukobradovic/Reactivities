@@ -5,6 +5,7 @@ import { IActivity } from "../models/activity";
 import {history} from "../..";
 import { toast } from "react-toastify";
 import { RootStore } from "./rootStore";
+import { createAtendee, setActivityProps } from "../common/util/util";
 
 
 
@@ -22,6 +23,7 @@ export default class ActivityStore{
     @observable loadingInitial = false;
     @observable submitting = false;
     @observable target = "";
+    @observable loading = false;
 
     @computed get activitiesByDate(){
       return this.groupActivitiesByDate(Array.from(this.activityRegistry.values()));
@@ -37,11 +39,12 @@ export default class ActivityStore{
 
     @action loadActivities = async () => {
         this.loadingInitial = true;
+        // const user = this.rootStore.userStore.user!;
         try{
-          const activities = await  agent.Activities.list();
+          const activities = await agent.Activities.list();
           runInAction(()=>{
             activities.forEach((a) => {
-              a.date = new Date(a.date);
+              setActivityProps(a, this.rootStore.userStore.user!);
               this.activityRegistry.set(a.id, a);
             });
             this.loadingInitial = false
@@ -66,7 +69,15 @@ export default class ActivityStore{
       this.submitting = true;
       try{
         await agent.Activities.create(activity);
+        //Kreiranje u frontentu da ej korisnik host
+        const atendee = createAtendee(this.rootStore.userStore.user!);
+        atendee.isHost = true;
+        let atendees = [];
+        atendees.push(atendee);
+        activity.attendees = atendees;
+        activity.isHost = true;
         runInAction(()=>{
+          //jedino observablesi moraju da budu u runInAction
           this.activityRegistry.set(activity.id, activity);
           this.submitting = false;
         });
@@ -81,6 +92,7 @@ export default class ActivityStore{
 
     @action loadActivity = async (id: string) =>{
       let activity = this.getActivity(id);
+      // const user = this.rootStore.userStore.user!;
       if(activity){
         this.activity = activity;
         return activity;
@@ -90,7 +102,7 @@ export default class ActivityStore{
         try{
           activity = await agent.Activities.details(id);
           runInAction(()=>{
-            activity.date = new Date(activity.date);
+            setActivityProps(activity, this.rootStore.userStore.user!);
             this.activity = activity;
             this.activityRegistry.set(activity.id, activity);
             this.loadingInitial = false;
@@ -155,6 +167,54 @@ export default class ActivityStore{
       })
         console.log(err);
       }
+    }
+
+    @action attendActivity = async () =>{
+      const atendee = createAtendee(this.rootStore.userStore.user!);
+      this.loading = true;
+      try{
+        await agent.Activities.attend(this.activity!.id);
+        runInAction(() => {
+          if(this.activity){
+            this.activity.attendees.push(atendee);
+            this.activity.isGoing = true;
+            this.activityRegistry.set(this.activity.id, this.activity);
+            this.loading = false;
+          }
+        })
+      }
+      catch(err){
+       runInAction(() => {
+        this.loading = false;
+       })
+        toast.error("Proble signin up to activity");
+      }     
+    }
+
+    @action cancelAttendence = async () => {
+      this.loading = true;
+      try{
+        //Trazimo aktivnost preko ID
+        await agent.Activities.unattend(this.activity!.id);
+        runInAction(() => {
+          if(this.activity){
+            //Brisemo iz statea korisnika, filter vraca uvijek novi niz
+            this.activity.attendees = this.activity.attendees.filter(
+              c => c.username !== this.rootStore.userStore.user!.username
+            );
+            this.activity.isGoing = false;
+            this.activityRegistry.set(this.activity.id, this.activity);
+            this.loading = false;
+          }
+        })
+      }
+      catch(err){
+        runInAction(() => {
+          this.loading = false;
+        })
+        toast.error("Problem canceling attendence");
+      }
+     
     }
 }
 
