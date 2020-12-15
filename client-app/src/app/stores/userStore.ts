@@ -54,6 +54,7 @@ export default class UserStore{
     }
 
     @action getUser = async () => {
+        //Da bi imali uvijek logovanog korisnika, i nakon refresha treba na ovo
         try{
             const user = await agent.User.current();
             runInAction(() => 
