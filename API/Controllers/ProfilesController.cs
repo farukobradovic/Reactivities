@@ -13,16 +13,10 @@ namespace API.Controllers
             return await Mediator.Send(new Application.Profiles.Details.Querry { Username = username });
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Unit>> Delete(string id)
+        [HttpPut]
+        public async Task<ActionResult<Unit>> Edit(Edit.Command command)
         {
-            return await Mediator.Send(new Application.Photos.Delete.Command { Id = id });
-        }
-
-        [HttpPost("{id}/setmain")]
-        public async Task<ActionResult<Unit>> SetMain(string id)
-        {
-            return await Mediator.Send(new Application.Photos.SetMain.Command { Id = id });
+            return await Mediator.Send(command);
         }
     }
 }
