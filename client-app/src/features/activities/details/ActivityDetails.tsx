@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { Grid } from "semantic-ui-react";
 import { LoadingComponent } from "../../../app/layout/LoadingComponent";
 import { RootStoreContext } from "../../../app/stores/rootStore";
-import { ActivityDetailedChat } from "./ActivityDetailedChat";
+import ActivityDetailedChat from "./ActivityDetailedChat";
 import ActivityDetailedHeader from "./ActivityDetailedHeader";
 import { ActivityDetailedInfo } from "./ActivityDetailedInfo";
 import ActivityDetailedSideBar from "./ActivityDetailedSideBar";
@@ -22,13 +22,11 @@ const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
 
   useEffect(() => {
     loadActivity(match.params.id);
-  }, [loadActivity, match.params.id]);
+  }, [loadActivity, match.params.id, history]);
 
-  if (loadingInitial || !activity)
-    return <LoadingComponent content='Loading activity' />;
+  if (loadingInitial) return <LoadingComponent content='Loading activity' />;
 
-  if (!activity) {
-  }
+  if (!activity) return <h2>Activity not found</h2>;
 
   return (
     <Grid>

@@ -9,7 +9,17 @@ export interface IActivity
     venue: string;
     isGoing: boolean;
     isHost: boolean;
-    attendees: IAtendee[]
+    attendees: IAtendee[];
+    comments: IComment[];
+}
+
+export interface IComment{
+    id: string;
+    createdAt: Date;
+    body: string;
+    username: string;
+    displayName: string;
+    image: string;
 }
 
 //Sve su opcionalne sad
