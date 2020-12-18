@@ -1,3 +1,8 @@
+export interface IActivitesEnvelope{
+    activities: IActivity[];
+    activityCount: number;
+}
+
 export interface IActivity
 {
     id: string;
@@ -52,4 +57,13 @@ export interface IAtendee{
     image: string;
     isHost: boolean;
     following?: boolean;
+}
+
+
+//treba bit u profiles al aj
+export interface IUserActivity{
+    id: string;
+    title: string;
+    category: string;
+    date: Date;
 }
