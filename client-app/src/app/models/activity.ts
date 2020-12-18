@@ -51,4 +51,5 @@ export interface IAtendee{
     displayName: string;
     image: string;
     isHost: boolean;
+    following?: boolean;
 }
