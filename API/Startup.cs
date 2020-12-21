@@ -54,8 +54,9 @@ namespace API
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials();
-                    //AllowCredentials je za signalR, jer drugacije radi od standardnog API
+                    policy.AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("WWW-Authenticate")
+                    .WithOrigins("http://localhost:3000").AllowCredentials();
+                    //AllowCredentials je za signalR, jer drugacije radi od standardnog API, WithExposedHeaders je da provjerava rok tokena
                 });
             });
             services.AddMediatR(typeof(List.Handler).Assembly);

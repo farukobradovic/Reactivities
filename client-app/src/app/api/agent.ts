@@ -17,7 +17,7 @@ axios.interceptors.request.use((config) => {
 })
 
 axios.interceptors.response.use(undefined, error => {
-    const {status, data, config} = error.response;
+    const {status, data, config, headers} = error.response;
     if(error.message === "Network Error" && !error.response){
         toast.error("Network error - make sure API is running!")
     }
@@ -25,6 +25,13 @@ axios.interceptors.response.use(undefined, error => {
     if(status === 404){
         history.push("/notFound");
     }
+    //ako token istekne
+    if (status === 401 && headers['www-authenticate'] === 'Bearer error="invalid_token", error_description="The token is expired"') {
+        window.localStorage.removeItem('jwt');
+        history.push('/')
+        toast.info('Your session has expired, please login again')
+      }
+
     //ako je guid nevazeci tj nije guid, npr kad se izbirse par cifri
     if(status === 400 && config.method === "get" && data.errors.hasOwnProperty("id")){
         history.push("/notFound");

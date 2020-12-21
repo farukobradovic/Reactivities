@@ -57,10 +57,7 @@ export const RegisterForm = () => {
             type='password'
           />
           {submitError && !dirtySinceLastSubmit && (
-            <ErrorMessage
-              error={submitError}
-              text='Invalid email or password'
-            />
+            <ErrorMessage error={submitError} />
           )}
           <Button
             color='teal'
